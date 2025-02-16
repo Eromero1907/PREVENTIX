@@ -23,4 +23,7 @@ urlpatterns = [
     path('', preventixappViews.home),
     path('register/', preventixappViews.register, name='register'),
     path('login/', preventixappViews.login_view, name='login'),
+    path('dashboard/', preventixappViews.dashboard, name='dashboard'),
+    path('dashboard/appointments/', preventixappViews.create_appointment, name='create_appointment'),
+    path('appointments/delete/<int:appointment_id>/', preventixappViews.delete_appointment, name='delete_appointment'),
 ]

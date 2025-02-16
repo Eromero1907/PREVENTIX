@@ -3,6 +3,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import CustomUser
+from .forms import AppointmentForm
+from .models import Appointment
+from datetime import datetime
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -70,3 +75,26 @@ def register(request):
         return redirect('dashboard')
 
     return render(request, 'register.html')
+
+def dashboard(request):
+    from django.utils.timezone import now
+    appointments = Appointment.objects.all()
+    return render(request, 'dashboard.html', {'appointments': appointments})
+
+def create_appointment(request):
+    if request.method == "POST":
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirigir al dashboard después de crear la cita
+    else:
+        form = AppointmentForm()
+    
+    return render(request, 'create_appointment.html', {'form': form})
+
+def delete_appointment(request, appointment_id):
+    if request.method == "POST":
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+        appointment.delete()
+        return JsonResponse({"status": "success"})  # Respuesta JSON
+    return JsonResponse({"status": "error"}, status=400)

@@ -125,3 +125,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'preventixapp.CustomUser'
 
+DATE_INPUT_FORMATS = [
+    '%d/%m/%Y',  # 17/02/2025
+    '%Y-%m-%d',  # 2025-02-17
+]
+
+TIME_INPUT_FORMATS = [
+    '%I:%M %p',  # 4:00 PM
+    '%H:%M',  # 16:00
+]
