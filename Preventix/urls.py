@@ -15,8 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from preventixapp import views as preventixappViews
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +28,12 @@ urlpatterns = [
     path('dashboard/', preventixappViews.dashboard, name='dashboard'),
     path('dashboard/appointments/', preventixappViews.create_appointment, name='create_appointment'),
     path('appointments/delete/<int:appointment_id>/', preventixappViews.delete_appointment, name='delete_appointment'),
+    path('dashboard/medical-history/', preventixappViews.medical_history, name='medical_history'),
+    path('dashboard/medical-history/add/', preventixappViews.add_file, name='add_file'),
+    path('dashboard/medical-history/edit/<int:file_id>/', preventixappViews.edit_file, name='edit_file'),
+    path('dashboard/medical-history/delete/<int:file_id>/', preventixappViews.delete_file, name='delete_file'),
+    path('dashboard/medical-history/view/<int:file_id>/', preventixappViews.view_file, name='view_file'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

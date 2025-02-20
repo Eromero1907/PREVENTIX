@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Detalles del Archivo</h2>
+    
+    <div class="file-details">
+        <h4>Título:</h4>
+        <p>{{ file.title }}</p>
+
+        <h4>Descripción:</h4>
+        <p>{{ file.description }}</p>
+
+        <h4>Fecha de subida:</h4>
+        <p>{{ file.uploaded_at|date:"d/m/Y H:i" }}</p>
+
+        <h4>Archivo adjunto:</h4>
+        {% if file.file %}
+            <a href="{{ file.file.url }}" class="btn btn-primary" target="_blank">Ver Archivo</a>
+        {% else %}
+            <p>No hay archivo adjunto.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'medical_history' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+
+<style>
+    .file-details {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .file-details h4 {
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Adjuntar Archivo</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Título</label>
+            <input type="text" name="title" id="title" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Descripción (Opcional)</label>
+            <textarea name="description" id="description" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Adjuntar Archivo (PDF)</label>
+            <input type="file" name="file" id="file" class="form-control" accept=".pdf" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Confirmar</button>
+        <a href="{% url 'medical_history' %}" class="btn btn-danger">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

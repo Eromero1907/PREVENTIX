@@ -8,6 +8,9 @@ from .models import Appointment
 from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from .models import MedicalFile
+from .forms import MedicalFileForm
+from django.utils.timezone import localtime
 
 User = get_user_model()
 
@@ -98,3 +101,57 @@ def delete_appointment(request, appointment_id):
         appointment.delete()
         return JsonResponse({"status": "success"})  # Respuesta JSON
     return JsonResponse({"status": "error"}, status=400)
+
+def medical_history(request):
+    files = MedicalFile.objects.all()
+    formatted_files = [
+        {
+            'id': file.id,
+            'title': file.title,
+            'uploaded_at': localtime(file.uploaded_at).strftime("%d/%m/%Y %H:%M")
+        } 
+        for file in files
+    ]
+    return render(request, 'medical_history.html', {'files': formatted_files})
+
+def add_file(request):
+    if request.method == 'POST':
+        form = MedicalFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('medical_history')
+    else:
+        form = MedicalFileForm()
+    return render(request, 'add_file.html', {'form': form})
+
+def edit_file(request, file_id):
+    file_instance = get_object_or_404(MedicalFile, id=file_id)
+    if request.method == 'POST':
+        form = MedicalFileForm(request.POST, request.FILES, instance=file_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('medical_history')
+    else:
+        form = MedicalFileForm(instance=file_instance)
+    return render(request, 'edit_file.html', {'form': form, 'file_instance': file_instance})
+
+def delete_file(request, file_id):
+    file_instance = get_object_or_404(MedicalFile, id=file_id)
+    if request.method == 'POST':
+        file_instance.delete()
+        return redirect('medical_history')
+    return render(request, 'delete_file.html', {'file_instance': file_instance})
+
+
+def confirm_delete_file(request, file_id):
+    file = get_object_or_404(MedicalFile, id=file_id)
+
+    if request.method == "POST":
+        file.delete()
+        return redirect('medical_history')
+
+    return render(request, 'delete_file.html', {'file': file})
+
+def view_file(request, file_id):
+    file = get_object_or_404(MedicalFile, id=file_id)
+    return render(request, 'view_file.html', {'file': file})

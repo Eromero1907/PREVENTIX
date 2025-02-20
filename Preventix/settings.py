@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -134,3 +134,8 @@ TIME_INPUT_FORMATS = [
     '%I:%M %p',  # 4:00 PM
     '%H:%M',  # 16:00
 ]
+
+import os
+
+MEDIA_URL = '/media/'  
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  

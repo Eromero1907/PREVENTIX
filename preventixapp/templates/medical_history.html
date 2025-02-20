@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Historial Médico</h2>
+    <a href="{% url 'add_file' %}" class="btn btn-primary">Adjuntar Registro</a>
+
+    <div class="file-container mt-3">
+        {% for file in files %}
+        <div class="file-entry">
+            <span class="file-title">{{ file.title }}</span>
+            <span class="file-date">{{ file.uploaded_at|date:"d/m/Y H:i" }}</span>
+
+            <!-- Marcas rojas que aparecerán al presionar "Eliminar" -->
+            <a href="{% url 'delete_file' file.id %}" class="delete-marker"></a>
+
+             <!-- Nuevo botón "Ver" -->
+             <a href="{% url 'view_file' file.id %}" class="btn btn-info btn-sm">Ver</a>
+
+            <!-- Botón para modificar -->
+            <a href="{% url 'edit_file' file.id %}" class="btn btn-warning btn-sm">Modificar</a>
+        </div>
+        {% empty %}
+        <p>No hay archivos en el historial médico.</p>
+        {% endfor %}
+    </div>
+
+    <div class="fixed-buttons">
+        {% if files %}
+            <button id="toggleDelete" class="btn btn-danger">Eliminar</button>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .file-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .file-entry {
+        position: relative;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Botón de eliminación (inicialmente oculto) */
+    .delete-marker {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: -15px;
+        transform: translateY(-50%);
+        background-color: red;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .file-entry.deleting .delete-marker {
+        display: inline-block;
+    }
+
+    .fixed-buttons {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let toggleButton = document.getElementById("toggleDelete");
+        if (toggleButton) {
+            toggleButton.addEventListener("click", function () {
+                document.querySelectorAll(".file-entry").forEach(el => el.classList.toggle("deleting"));
+            });
+        }
+    });
+</script>
+
+{% endblock %}
+
+

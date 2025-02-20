@@ -1,6 +1,7 @@
 from django import forms
 from .models import Appointment
 from .validators import validate_address
+from .models import MedicalFile
 
 class AppointmentForm(forms.ModelForm):
     date = forms.DateField(
@@ -27,3 +28,13 @@ class AppointmentForm(forms.ModelForm):
 
 class DireccionForm(forms.Form):
     direccion = forms.CharField(max_length=50, validators=[validate_address])
+
+class MedicalFileForm(forms.ModelForm):
+    class Meta:
+        model = MedicalFile
+        fields = ['title', 'description', 'file']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'file': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
+        }
