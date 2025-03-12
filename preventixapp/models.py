@@ -24,18 +24,6 @@ def validate_address(value):
 
     if not re.match(pattern, value):
         raise ValidationError("Formato de dirección inválido. Usa: Cra (número)(extensión) #(número)(extensión) - (número)")
-
-class Appointment(models.Model):
-    title = models.CharField(max_length=255)
-    date = models.DateField()
-    time = models.TimeField()
-    specialty = models.CharField(max_length=255)
-    doctor_name = models.CharField(max_length=255)  # Nuevo campo para el nombre del doctor
-    description = models.TextField(blank=True, null=True)
-    address = models.CharField(max_length=255, validators=[validate_address])  # Dirección con validación
-
-    def __str__(self):
-        return f"{self.title} - {self.date} {self.time}"
     
 class Usuario(models.Model):
     direccion = models.CharField(max_length=50, validators=[validate_address])

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">{% if prescription %}Editar{% else %}Nueva{% endif %} Prescripción</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">
+                    {% if prescription %}Actualizar{% else %}Crear{% endif %}
+                </button>
+                <a href="{% url 'prescription_list' %}" class="btn btn-secondary">Volver a la lista</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

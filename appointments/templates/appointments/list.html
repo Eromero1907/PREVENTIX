@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Citas</h2>
+    <a href="{% url 'create_appointment' %}" class="btn btn-primary mb-3">Agregar Cita</a>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Especialidad</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Doctor(a)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.title }}</td>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.time }}</td>
+                <td>{{ appointment.doctor_name }}</td>
+                <td>
+                    <a href="{% url 'edit_appointment' appointment.id %}" class="btn btn-warning">Modificar</a>
+                    <a href="{% url 'delete_appointment' appointment.id %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay citas disponibles.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

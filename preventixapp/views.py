@@ -3,10 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import CustomUser
-from .forms import AppointmentForm
-from .models import Appointment
 from datetime import datetime
 from django.http import JsonResponse
+from appointments.models import Appointment 
 from django.shortcuts import get_object_or_404
 from .models import MedicalFile
 from .forms import MedicalFileForm
@@ -83,24 +82,6 @@ def dashboard(request):
     from django.utils.timezone import now
     appointments = Appointment.objects.all()
     return render(request, 'dashboard.html', {'appointments': appointments})
-
-def create_appointment(request):
-    if request.method == "POST":
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard')  # Redirigir al dashboard después de crear la cita
-    else:
-        form = AppointmentForm()
-    
-    return render(request, 'create_appointment.html', {'form': form})
-
-def delete_appointment(request, appointment_id):
-    if request.method == "POST":
-        appointment = get_object_or_404(Appointment, id=appointment_id)
-        appointment.delete()
-        return JsonResponse({"status": "success"})  # Respuesta JSON
-    return JsonResponse({"status": "error"}, status=400)
 
 def medical_history(request):
     files = MedicalFile.objects.all()

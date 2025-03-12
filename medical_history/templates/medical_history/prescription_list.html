@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container">
+    <h1 class="my-4">Gestión de Prescripciones</h1>
+
+    <!-- Botón para agregar una nueva prescripción -->
+    <a href="{% url 'create_prescription' %}" class="btn btn-primary mb-3">Agregar nueva prescripción</a>
+
+    <h2>Lista de Prescripciones</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Medicamento</th>
+                <th>Cantidad por toma</th>
+                <th>Intervalo (h)</th>
+                <th>Duración (días)</th>
+                <th>Forma de administración</th>
+                <th>Restricciones</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in prescriptions %}
+            <tr>
+                <td>{{ prescription.medication }}</td>
+                <td>{{ prescription.pills_per_dose }} pastilla(s)</td>
+                <td>{{ prescription.interval_hours }}</td>
+                <td>{{ prescription.duration_days }}</td>
+                <td>{{ prescription.get_administration_method_display }}</td>
+                <td>{{ prescription.restrictions|default:"N/A" }}</td>
+                <td>{{ prescription.description|default:"N/A" }}</td>
+                <td>
+                    <a href="{% url 'edit_prescription' prescription.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-id="{{ prescription.id }}">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No hay prescripciones registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 🔹 Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres eliminar esta prescripción?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var deleteModal = document.getElementById('deleteModal');
+
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            if (!button) return;
+
+            var prescriptionId = button.getAttribute('data-id');
+            console.log("ID de prescripción a eliminar:", prescriptionId); // Debugging
+
+            var form = document.getElementById('deleteForm');
+            if (prescriptionId) {
+                var deleteUrl = "{% url 'delete_prescription' 999999 %}".replace("999999", prescriptionId);
+                console.log("URL generada:", deleteUrl); // Debugging
+                form.action = deleteUrl;
+            }
+        });
+    });
+</script>
+{% endblock %}
