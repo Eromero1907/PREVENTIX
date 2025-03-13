@@ -27,11 +27,6 @@ urlpatterns = [
     path('login/', preventixappViews.login_view, name='login'),
     path('dashboard/', preventixappViews.dashboard, name='dashboard'),
     path('appointments/', include('appointments.urls')),
-    path('dashboard/medical-history/', preventixappViews.medical_history, name='medical_history'),
-    path('dashboard/medical-history/add/', preventixappViews.add_file, name='add_file'),
-    path('dashboard/medical-history/edit/<int:file_id>/', preventixappViews.edit_file, name='edit_file'),
-    path('dashboard/medical-history/delete/<int:file_id>/', preventixappViews.delete_file, name='delete_file'),
-    path('dashboard/medical-history/view/<int:file_id>/', preventixappViews.view_file, name='view_file'),
     path('medical_history/', include('medical_history.urls')),
 ]
 

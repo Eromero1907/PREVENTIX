@@ -27,12 +27,3 @@ def validate_address(value):
     
 class Usuario(models.Model):
     direccion = models.CharField(max_length=50, validators=[validate_address])
-
-class MedicalFile(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    file = models.FileField(upload_to='', null=False, blank=False)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title

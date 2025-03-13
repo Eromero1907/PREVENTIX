@@ -10,10 +10,25 @@
     <ul class="list-group">
         {% for appointment in appointments %}
             <li class="list-group-item">
-                <strong>{{ appointment.title }}</strong> - {{ appointment.date }} {{ appointment.time }}
-                <p>{{ appointment.description }}</p>
-                <p><strong>Dirección:</strong> {{ appointment.address }}</p>
-                <p><strong>Doctor:</strong> {{ appointment.doctor_name }}</p>
+                <strong>{{ appointment.title }}</strong>
+            <table class="table-borderless">
+                <tr>
+                    <td><strong>Fecha:</strong></td>
+                    <td>{{ appointment.date }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Hora:</strong></td>
+                    <td>{{ appointment.time }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Lugar:</strong></td>
+                    <td>{{ appointment.address }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Doctor:</strong></td>
+                    <td>{{ appointment.doctor_name }}</td>
+                </tr>
+            </table>
             </li>
         {% empty %}
             <li class="list-group-item text-muted">No hay citas programadas.</li>
