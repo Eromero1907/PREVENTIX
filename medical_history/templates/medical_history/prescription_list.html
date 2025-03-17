@@ -43,7 +43,7 @@
                 <td>{{ prescription.restrictions|default:"N/A" }}</td>
                 <td>{{ prescription.description|default:"N/A" }}</td>
                 <td>
-                    <a href="{% url 'edit_prescription' prescription.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'edit_prescription' prescription.id %}" class="btn btn-warning btn-sm">Modificar</a>
                     <button type="button" class="btn btn-danger btn-sm"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteModal"
