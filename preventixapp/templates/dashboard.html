@@ -4,6 +4,22 @@
 <div class="container mt-4" style="max-width: 900px; margin: 0 auto;">
     <h3>Estadísticas de tus tipos de citas</h3>
     <canvas id="specialtyChart" width="400" height="275"></canvas>
+    <div class="mt-5">
+        <h4>Sugerencias de citas que podrías necesitar</h4>
+        {% if forgotten_specialties %}
+            <ul class="list-group">
+                {% for item in forgotten_specialties %}
+                    <li class="list-group-item">
+                        <strong>{{ item.specialty }}</strong>: {{ item.reason }}<br>
+                        Última vez solicitada: {{ item.last_date }}<br>
+                        Total de veces solicitada: {{ item.times_requested }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay sugerencias en este momento. ¡Vas al día con tus citas!</p>
+        {% endif %}
+    </div>    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

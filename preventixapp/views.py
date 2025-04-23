@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect
+from django.utils.dateformat import format as date_format
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import CustomUser
-from datetime import datetime
-from django.http import JsonResponse
+from .utils import get_forgotten_specialties
 from appointments.models import Appointment 
-from django.shortcuts import get_object_or_404
-from django.utils.timezone import localtime
 import json
 
 
@@ -82,22 +80,27 @@ def register(request):
 
 @login_required
 def dashboard(request):
-    # Obtener estadísticas de los tipos de citas
+    # Obtener estadísticas para la gráfica
     stats = (
         Appointment.objects
         .filter(user=request.user)
-        .exclude(specialty__isnull=True)  # Asegurarse de excluir los valores nulos
-        .exclude(specialty='')  # Excluir las citas que no tienen especialidad
+        .exclude(specialty__isnull=True)
+        .exclude(specialty='')
         .values('specialty')
         .annotate(count=Count('id'))
         .order_by('-count')
     )
-    
-    # Extraer las especialidades y los recuentos
+
     labels = [item['specialty'] for item in stats]
     counts = [item['count'] for item in stats]
 
+    # Obtener especialidades olvidadas
+    forgotten = get_forgotten_specialties(request.user)
+    for item in forgotten:
+        item['last_date'] = date_format(item['last_date'], 'Y-m-d')
+
     return render(request, 'dashboard.html', {
         'labels': json.dumps(labels),
-        'counts': json.dumps(counts)
+        'counts': json.dumps(counts),
+        'forgotten_specialties': forgotten,
     })

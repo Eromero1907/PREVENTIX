@@ -4,7 +4,9 @@
 <div class="container mt-4">
     <h2>Lista de Citas</h2>
     <a href="{% url 'create_appointment' %}" class="btn btn-primary mb-3">Agregar Cita</a>
-    
+
+    <!-- Citas Próximas -->
+    <h4>Citas Próximas</h4>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -16,9 +18,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for appointment in appointments %}
+            {% for appointment in upcoming_appointments %}
             <tr>
-                <td>{{ appointment.title }}</td>
+                <td>{{ appointment.specialty }}</td>
                 <td>{{ appointment.date }}</td>
                 <td>{{ appointment.time }}</td>
                 <td>{{ appointment.doctor_name }}</td>
@@ -29,10 +31,58 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4">No hay citas disponibles.</td>
+                <td colspan="5">No hay citas próximas.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Botón Mostrar/Ocultar citas pasadas -->
+    <button class="btn btn-outline-secondary mb-2" id="togglePastBtn" onclick="togglePast()">Mostrar citas pasadas</button>
+
+    <!-- Citas Pasadas -->
+    <div id="pastAppointments" style="display: none;">
+        <h4 class="mt-3">Citas Pasadas</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Especialidad</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Doctor(a)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in past_appointments %}
+                <tr>
+                    <td>{{ appointment.title }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td>{{ appointment.doctor_name }}</td>
+                    <td>
+                        <a href="{% url 'edit_appointment' appointment.id %}" class="btn btn-warning">Modificar</a>
+                        <a href="{% url 'delete_appointment' appointment.id %}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay citas pasadas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script>
+    function togglePast() {
+        const container = document.getElementById("pastAppointments");
+        const button = document.getElementById("togglePastBtn");
+        const isHidden = container.style.display === "none";
+
+        container.style.display = isHidden ? "block" : "none";
+        button.textContent = isHidden ? "Ocultar citas pasadas" : "Mostrar citas pasadas";
+    }
+</script>
 {% endblock %}

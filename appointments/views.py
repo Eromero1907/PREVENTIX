@@ -3,13 +3,28 @@ from .forms import AppointmentForm
 from .models import Appointment
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from appointments.templatetags.custom_filters import add_class
+from datetime import date
 
 # Lista solo las citas del usuario autenticado
+
 @login_required
 def appointment_list(request):
-    appointments = Appointment.objects.filter(user=request.user)  # Filtrar por usuario
-    return render(request, 'appointments/list.html', {'appointments': appointments})
+    today = date.today()
+
+    upcoming_appointments = Appointment.objects.filter(
+        user=request.user,
+        date__gte=today
+    ).order_by('date', 'time')
+
+    past_appointments = Appointment.objects.filter(
+        user=request.user,
+        date__lt=today
+    ).order_by('-date', '-time')  # Más recientes primero en las pasadas
+
+    return render(request, 'appointments/list.html', {
+        'upcoming_appointments': upcoming_appointments,
+        'past_appointments': past_appointments
+    })
 
 # Edita solo citas del usuario autenticado
 @login_required

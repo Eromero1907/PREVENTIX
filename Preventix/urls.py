@@ -19,15 +19,17 @@ from django.urls import path, include
 from preventixapp import views as preventixappViews
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', preventixappViews.home),
+    path('', preventixappViews.home, name="home"),
     path('register/', preventixappViews.register, name='register'),
     path('login/', preventixappViews.login_view, name='login'),
     path('dashboard/', preventixappViews.dashboard, name='dashboard'),
     path('appointments/', include('appointments.urls')),
     path('medical_history/', include('medical_history.urls')),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
 ]
 
 if settings.DEBUG:
