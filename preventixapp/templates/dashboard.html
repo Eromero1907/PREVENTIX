@@ -1,38 +1,43 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Preventix{% endblock %}
-
 {% block content %}
-    <h2>Bienvenido a Preventix</h2>
-    <p>Aquí puedes administrar tus citas, registros médicos, y más.</p>
+<div class="container mt-4" style="max-width: 900px; margin: 0 auto;">
+    <h3>Estadísticas de tus tipos de citas</h3>
+    <canvas id="specialtyChart" width="400" height="275"></canvas>
+</div>
 
-    <h3 class="mt-4">Próximas Citas</h3>
-    <ul class="list-group">
-        {% for appointment in appointments %}
-            <li class="list-group-item">
-                <strong>{{ appointment.title }}</strong>
-            <table class="table-borderless">
-                <tr>
-                    <td><strong>Fecha:</strong></td>
-                    <td>{{ appointment.date }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Hora:</strong></td>
-                    <td>{{ appointment.time }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Lugar:</strong></td>
-                    <td>{{ appointment.address }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Doctor:</strong></td>
-                    <td>{{ appointment.doctor_name }}</td>
-                </tr>
-            </table>
-            </li>
-        {% empty %}
-            <li class="list-group-item text-muted">No hay citas programadas.</li>
-        {% endfor %}
-    </ul>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Usamos JSON.parse() para convertir los datos en un objeto JavaScript válido
+    const labels = JSON.parse('{{ labels|escapejs }}');
+    const counts = JSON.parse('{{ counts|escapejs }}');
+
+    const ctx = document.getElementById('specialtyChart').getContext('2d');
+    const specialtyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Cantidad de citas por especialidad',
+                data: counts,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,  // Permite que el gráfico se adapte a las dimensiones del canvas
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
 

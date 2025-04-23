@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -8,6 +10,7 @@ from django.http import JsonResponse
 from appointments.models import Appointment 
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import localtime
+import json
 
 
 User = get_user_model()
@@ -77,6 +80,24 @@ def register(request):
 
     return render(request, 'register.html')
 
+@login_required
 def dashboard(request):
-    appointments = Appointment.objects.filter(user=request.user)
-    return render(request, 'dashboard.html', {'appointments': appointments})
+    # Obtener estadísticas de los tipos de citas
+    stats = (
+        Appointment.objects
+        .filter(user=request.user)
+        .exclude(specialty__isnull=True)  # Asegurarse de excluir los valores nulos
+        .exclude(specialty='')  # Excluir las citas que no tienen especialidad
+        .values('specialty')
+        .annotate(count=Count('id'))
+        .order_by('-count')
+    )
+    
+    # Extraer las especialidades y los recuentos
+    labels = [item['specialty'] for item in stats]
+    counts = [item['count'] for item in stats]
+
+    return render(request, 'dashboard.html', {
+        'labels': json.dumps(labels),
+        'counts': json.dumps(counts)
+    })

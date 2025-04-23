@@ -5,7 +5,55 @@
     <h2>Editar Cita</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.date.label_tag }}
+            {{ form.date }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.time.label_tag }}
+            {{ form.time }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_specialty">Especialidad</label>
+            <select name="specialty" id="id_specialty" class="form-control">
+                {% if frequent %}
+                <optgroup label="Tus especialidades frecuentes">
+                    {% for s in frequent %}
+                        <option value="{{ s }}" {% if form.instance.specialty == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
+                <optgroup label="Otras especialidades">
+                    {% for s in others %}
+                        <option value="{{ s }}" {% if form.instance.specialty == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            {{ form.doctor_name.label_tag }}
+            {{ form.doctor_name }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.address.label_tag }}
+            {{ form.address }}
+        </div>
+
         <button type="submit" class="btn btn-primary">Guardar cambios</button>
         <a href="{% url 'appointment_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
