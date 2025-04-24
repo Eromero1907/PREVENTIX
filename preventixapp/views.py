@@ -7,9 +7,9 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import CustomUser
 from .utils import get_forgotten_specialties
+from appointments.ml_model import recommend_appointments
 from appointments.models import Appointment 
 import json
-
 
 User = get_user_model()
 
@@ -80,27 +80,30 @@ def register(request):
 
 @login_required
 def dashboard(request):
-    # Obtener estadísticas para la gráfica
+    # Obtener estadísticas y especialidades olvidadas
     stats = (
         Appointment.objects
         .filter(user=request.user)
         .exclude(specialty__isnull=True)
         .exclude(specialty='')
         .values('specialty')
-        .annotate(count=Count('id'))
+        .annotate(count=Count('specialty'))
         .order_by('-count')
     )
 
     labels = [item['specialty'] for item in stats]
     counts = [item['count'] for item in stats]
 
-    # Obtener especialidades olvidadas
     forgotten = get_forgotten_specialties(request.user)
     for item in forgotten:
         item['last_date'] = date_format(item['last_date'], 'Y-m-d')
+
+    # Obtener citas recomendadas para el usuario
+    recommended_appointments = recommend_appointments(request.user.id)
 
     return render(request, 'dashboard.html', {
         'labels': json.dumps(labels),
         'counts': json.dumps(counts),
         'forgotten_specialties': forgotten,
+        'recommended_appointments': recommended_appointments.to_dict('records'),  # Convierte el DataFrame a dict
     })

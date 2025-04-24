@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 900px; margin: 0 auto;">
+    <h3>Calendario de Citas</h3>
+    <div id="calendar"></div>
+</div>
+
+<!-- Modal Bootstrap para detalles del evento -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header text-white" id="modalHeader">
+        <h5 class="modal-title" id="eventModalLabel"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body bg-white">
+        <p><strong>Fecha:</strong> <span id="modalDate"></span></p>
+        <p><strong>Hora:</strong> <span id="modalTime"></span></p>
+        <p><strong>Dirección:</strong> <span id="modalAddress"></span></p>
+      </div>
+      <div class="modal-footer bg-white">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FullCalendar CSS y JS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+
+<script>
+    const specialtyColors = {
+        'Odontología': '#2E86C1',
+        'Vacunación': '#148F77',
+        'Chequeo general': '#117864',
+        'Dermatología': '#AF7AC5',
+        'Oftalmología': '#5DADE2',
+        'Cardiología': '#C0392B',
+        'Ginecología': '#EC7063',
+        'Urología': '#1F618D',
+        'Pediatría': '#F39C12',
+        'Otorrinolaringología': '#D68910',
+        'Medicina interna': '#566573',
+        'Endocrinología': '#A04000',
+        'Nutrición': '#28B463',
+        'Psicología': '#5B2C6F',
+        'Psiquiatría': '#4A235A',
+        'Neumología': '#2E4053',
+        'Fisioterapia': '#1ABC9C',
+        'Rehabilitación': '#45B39D',
+        'Neurología': '#7D3C98',
+        'Revisión postoperatoria': '#B9770E',
+        'Análisis de laboratorio': '#839192',
+        'Control de peso': '#27AE60',
+        'Revisión de medicamentos': '#2980B9',
+        'Consulta virtual': '#7FB3D5',
+        'Medicina del deporte': '#D35400'
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        events: JSON.parse('{{ events_json|escapejs }}'),
+        locale: 'es',
+        eventClick: function(info) {
+            const specialty = info.event.title;
+            const header = document.getElementById('modalHeader');
+            const title = document.getElementById('eventModalLabel');
+
+            title.textContent = specialty;
+
+            // Asegurarnos de que el color se aplique correctamente al encabezado
+            const eventColor = info.event.extendedProps.color || '#7f7f7f'; // Leer el color desde extendedProps
+            header.style.backgroundColor = eventColor;  // Asignamos el color al encabezado del modal
+
+            // Rellenamos el contenido del modal
+            document.getElementById('modalDate').textContent = info.event.start.toLocaleDateString();
+            document.getElementById('modalTime').textContent = info.event.extendedProps.time;
+            document.getElementById('modalAddress').textContent = info.event.extendedProps.address;
+
+            // Mostrar el modal
+            new bootstrap.Modal(document.getElementById('eventModal')).show();
+        }
+    });
+    calendar.render();
+});
+
+</script>
+{% endblock %}

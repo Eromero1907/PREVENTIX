@@ -4,6 +4,7 @@
 <div class="container mt-4" style="max-width: 900px; margin: 0 auto;">
     <h3>Estadísticas de tus tipos de citas</h3>
     <canvas id="specialtyChart" width="400" height="275"></canvas>
+
     <div class="mt-5">
         <h4>Sugerencias de citas que podrías necesitar</h4>
         {% if forgotten_specialties %}
@@ -20,11 +21,26 @@
             <p>No hay sugerencias en este momento. ¡Vas al día con tus citas!</p>
         {% endif %}
     </div>    
+
+    <div class="mt-5 mb-5">
+        <h4>Citas recomendadas basadas en tus hábitos</h4>
+        {% if recommended_appointments %}
+            <ul class="list-group">
+                {% for appointment in recommended_appointments %}
+                    <li class="list-group-item">
+                        <strong>{{ appointment.specialty }}</strong><br>
+                        Fecha: {{ appointment.formatted_date }}<br>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay citas recomendadas en este momento.</p>
+        {% endif %}
+    </div>    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Usamos JSON.parse() para convertir los datos en un objeto JavaScript válido
     const labels = JSON.parse('{{ labels|escapejs }}');
     const counts = JSON.parse('{{ counts|escapejs }}');
 
@@ -43,7 +59,7 @@
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,  // Permite que el gráfico se adapte a las dimensiones del canvas
+            maintainAspectRatio: true,
             scales: {
                 y: {
                     beginAtZero: true,

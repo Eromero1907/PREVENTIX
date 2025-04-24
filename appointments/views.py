@@ -4,6 +4,9 @@ from .models import Appointment
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from datetime import date
+from .ml_model import recommend_appointments
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Lista solo las citas del usuario autenticado
 
@@ -123,3 +126,67 @@ def delete_appointment(request, appointment_id):
         return redirect('appointment_list')  # Redirige a la lista de citas después de eliminar
 
     return render(request, 'appointments/delete_appointment.html', {'appointment': appointment})
+
+@login_required
+def appointment_recommendations(request):
+    user_id = request.user.id
+
+    # Obtener las citas recomendadas para el usuario
+    recommended_appointments = recommend_appointments(user_id)
+
+    # Mostrar recomendaciones en el template
+    return render(request, 'appointments/recommendations.html', {
+        'recommended_appointments': recommended_appointments
+    })
+
+
+color_map = {
+    'Odontología': '#4E79A7',
+    'Vacunación': '#59A14F',
+    'Chequeo general': '#9C755F',
+    'Dermatología': '#F28E2B',
+    'Oftalmología': '#76B7B2',
+    'Cardiología': '#E15759',
+    'Ginecología': '#B07AA1',
+    'Urología': '#D37295',
+    'Pediatría': '#FF9DA7',
+    'Otorrinolaringología': '#F1CE63',
+    'Medicina interna': '#8CD17D',
+    'Endocrinología': '#A0CBE8',
+    'Nutrición': '#FFBE7D',
+    'Psicología': '#B6992D',
+    'Psiquiatría': '#CFCFCF',
+    'Neumología': '#79706E',
+    'Fisioterapia': '#5F9EA0',
+    'Rehabilitación': '#AADEA7',
+    'Neurología': '#B07AA1',
+    'Revisión postoperatoria': '#D4A6C8',
+    'Análisis de laboratorio': '#BAB0AC',
+    'Control de peso': '#E17C05',
+    'Revisión de medicamentos': '#C44E52',
+    'Consulta virtual': '#6B6ECF',
+    'Medicina del deporte': '#17BECF',
+}
+
+@login_required
+def calendar_view(request):
+    user_appointments = Appointment.objects.filter(user=request.user)
+    events = []
+
+    for appointment in user_appointments:
+        events.append({
+        'title': appointment.specialty,
+        'start': appointment.date.isoformat(),
+        'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Color en el evento
+        'extendedProps': {
+            'time': appointment.time.strftime('%H:%M') if appointment.time else 'No definida',
+            'address': appointment.address if appointment.address else 'No definida',
+            'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Aseguramos que el color esté aquí también
+        }
+        })
+
+
+    context = {
+        'events_json': json.dumps(events)
+    }
+    return render(request, 'appointments/calendar.html', context)
