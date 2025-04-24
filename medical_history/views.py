@@ -9,8 +9,10 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def prescription_list(request):
-    prescriptions = Prescription.objects.filter(user=request.user)  # Filtrar por usuario
-    return render(request, 'medical_history/prescription_list.html', {'prescriptions': prescriptions})
+    prescriptions = Prescription.objects.filter(user=request.user)
+    return render(request, 'medical_history/prescription_list.html', {
+        'prescriptions': prescriptions
+    })
 
 @login_required
 def create_prescription(request):
@@ -18,32 +20,44 @@ def create_prescription(request):
         form = PrescriptionForm(request.POST)
         if form.is_valid():
             prescription = form.save(commit=False)
-            prescription.user = request.user  # Asignar el usuario actual
+            prescription.user = request.user
             prescription.save()
+            messages.success(request, "Prescripción creada exitosamente.")
             return redirect('prescription_list')
     else:
         form = PrescriptionForm()
-    return render(request, 'medical_history/prescription_form.html', {'form': form})
+    return render(request, 'medical_history/prescription_form.html', {
+        'form': form,
+        'is_edit': False
+    })
 
 @login_required
 def edit_prescription(request, pk):
-    prescription = get_object_or_404(Prescription, pk=pk, user=request.user)  # Asegurar que el usuario solo edite lo suyo
+    prescription = get_object_or_404(Prescription, pk=pk, user=request.user)
     if request.method == "POST":
         form = PrescriptionForm(request.POST, instance=prescription)
         if form.is_valid():
             form.save()
+            messages.success(request, "Prescripción actualizada exitosamente.")
             return redirect('prescription_list')
     else:
         form = PrescriptionForm(instance=prescription)
-    return render(request, 'medical_history/prescription_form.html', {'form': form, 'prescription': prescription})
+    return render(request, 'medical_history/prescription_form.html', {
+        'form': form,
+        'prescription': prescription,
+        'is_edit': True
+    })
 
 @login_required
 def delete_prescription(request, pk):
-    prescription = get_object_or_404(Prescription, pk=pk, user=request.user)  # Asegurar que solo pueda borrar lo suyo
+    prescription = get_object_or_404(Prescription, pk=pk, user=request.user)
     if request.method == "POST":
         prescription.delete()
         messages.success(request, "Prescripción eliminada correctamente.")
-    return redirect('prescription_list')
+        return redirect('prescription_list')
+    return render(request, 'medical_history/prescription_confirm_delete.html', {
+        'prescription': prescription
+    })
 
 @login_required
 def medical_history(request):

@@ -16,16 +16,10 @@ class PrescriptionForm(forms.ModelForm):
     class Meta:
         model = Prescription
         fields = [
-            'medication', 'pills_per_dose', 'dosage_mg', 'interval_hours',
-            'duration_days', 'administration_method', 'restrictions', 'description'
+            'medication', 'unit_per_dose', 'dosage_amount', 'dosage_unit',
+            'interval_hours', 'duration_days', 'start_date',
+            'administration_method', 'restrictions', 'description'
         ]
-        labels = {
-            'medication': 'Medicamento',
-            'pills_per_dose': 'Cantidad por toma (pastillas)',
-            'dosage_mg': 'Dosis (mg) [Opcional]',
-            'interval_hours': 'Cada cuántas horas',
-            'duration_days': 'Días de duración',
-            'administration_method': 'Forma de administración',
-            'restrictions': 'Restricciones',
-            'description': 'Descripción breve',
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
         }

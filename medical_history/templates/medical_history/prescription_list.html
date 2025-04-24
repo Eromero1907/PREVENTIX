@@ -6,7 +6,7 @@
         {% for message in messages %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
         {% endfor %}
     </div>
@@ -24,8 +24,11 @@
             <tr>
                 <th>Medicamento</th>
                 <th>Cantidad por toma</th>
+                <th>Dosis</th>
                 <th>Intervalo (h)</th>
                 <th>Duración (días)</th>
+                <th>Inicio</th>
+                <th>Fin</th>
                 <th>Forma de administración</th>
                 <th>Restricciones</th>
                 <th>Descripción</th>
@@ -36,9 +39,18 @@
             {% for prescription in prescriptions %}
             <tr>
                 <td>{{ prescription.medication }}</td>
-                <td>{{ prescription.pills_per_dose }} pastilla(s)</td>
+                <td>{{ prescription.unit_per_dose }}</td>
+                <td>
+                    {% if prescription.dosage_amount %}
+                        {{ prescription.dosage_amount }} {{ prescription.dosage_unit }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
                 <td>{{ prescription.interval_hours }}</td>
                 <td>{{ prescription.duration_days }}</td>
+                <td>{{ prescription.start_date }}</td>
+                <td>{{ prescription.end_date }}</td>
                 <td>{{ prescription.get_administration_method_display }}</td>
                 <td>{{ prescription.restrictions|default:"N/A" }}</td>
                 <td>{{ prescription.description|default:"N/A" }}</td>
@@ -54,7 +66,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8" class="text-center">No hay prescripciones registradas.</td>
+                <td colspan="11" class="text-center">No hay prescripciones registradas.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -95,12 +107,9 @@
             if (!button) return;
 
             var prescriptionId = button.getAttribute('data-id');
-            console.log("ID de prescripción a eliminar:", prescriptionId); // Debugging
-
             var form = document.getElementById('deleteForm');
             if (prescriptionId) {
                 var deleteUrl = "{% url 'delete_prescription' 999999 %}".replace("999999", prescriptionId);
-                console.log("URL generada:", deleteUrl); // Debugging
                 form.action = deleteUrl;
             }
         });
