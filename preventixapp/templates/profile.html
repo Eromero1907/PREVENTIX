@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<h2>Mi Perfil</h2>
+
+<style>
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+.profile-picture-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.profile-picture-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-picture-wrapper:hover .edit-icon {
+    opacity: 1;
+}
+
+.edit-icon i {
+    color: white;
+    font-size: 18px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.profile-details {
+    width: 300px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.data-view {
+    display: inline-block;
+}
+
+input[type="text"], input[type="date"] {
+    width: 100%;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: none;
+}
+
+#edit-btn, #save-btn, #cancel-btn {
+    margin-right: 5px;
+}
+</style>
+
+<div class="profile-container">
+    <div class="profile-picture-wrapper">
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="Foto de perfil">
+        {% else %}
+            <img src="{% static 'images/default_profile.png' %}" alt="Foto de perfil">
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" id="profile-pic-form">
+            {% csrf_token %}
+            <label for="id_profile_picture" class="edit-icon" aria-label="Cambiar foto de perfil">
+                <i class="fas fa-pencil-alt"></i>
+            </label>
+            {{ picture_form.profile_picture }}
+        </form>
+    </div>
+
+    <!-- Formulario para editar datos del usuario -->
+    <form method="POST" id="profile-info-form">
+        {% csrf_token %}
+        <input type="hidden" name="info_form" value="true"> <!-- 🔥 Esto ayuda a identificar el formulario -->
+        <div class="profile-details">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <span class="data-view">{{ user.first_name }}</span>
+                <input type="text" name="first_name" value="{{ user.first_name }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>Apellido:</label>
+                <span class="data-view">{{ user.last_name }}</span>
+                <input type="text" name="last_name" value="{{ user.last_name }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>Teléfono:</label>
+                <span class="data-view">{{ user.phone_number }}</span>
+                <input type="text" name="phone_number" value="{{ user.phone_number }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>Dirección:</label>
+                <span class="data-view">{{ user.direccion }}</span>
+                <input type="text" name="direccion" value="{{ user.direccion }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>Fecha de Nacimiento:</label>
+                <span class="data-view">{{ user.birth_date }}</span>
+                <input type="date" name="birth_date" value="{{ user.birth_date }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>Grupo Sanguíneo:</label>
+                <span class="data-view">{{ user.blood_type }}</span>
+                <input type="text" name="blood_type" value="{{ user.blood_type }}" class="edit-field">
+            </div>
+            <div class="form-group">
+                <label>EPS / Aseguradora:</label>
+                <span class="data-view">{{ user.insurance }}</span>
+                <input type="text" name="insurance" value="{{ user.insurance }}" class="edit-field">
+            </div>
+
+            <button type="button" id="edit-btn">Editar</button>
+            <button type="submit" id="save-btn" style="display: none;">Guardar</button>
+            <button type="button" id="cancel-btn" style="display: none;">Cancelar</button>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    const editButton = document.getElementById('edit-btn');
+    const saveButton = document.getElementById('save-btn');
+    const cancelButton = document.getElementById('cancel-btn');
+    const dataViews = document.querySelectorAll('.data-view');
+    const editFields = document.querySelectorAll('.edit-field');
+
+    // Guardar valores originales para restaurar
+    const originalValues = Array.from(editFields).map(input => input.value);
+
+    editButton.addEventListener('click', () => {
+        dataViews.forEach(view => view.style.display = 'none');
+        editFields.forEach(field => field.style.display = 'block');
+        
+        editButton.style.display = 'none';
+        saveButton.style.display = 'inline-block';
+        cancelButton.style.display = 'inline-block';
+    });
+
+    cancelButton.addEventListener('click', () => {
+        // Restaurar valores originales
+        editFields.forEach((field, index) => {
+            field.value = originalValues[index];
+        });
+
+        dataViews.forEach(view => view.style.display = 'inline-block');
+        editFields.forEach(field => field.style.display = 'none');
+
+        editButton.style.display = 'inline-block';
+        saveButton.style.display = 'none';
+        cancelButton.style.display = 'none';
+    });
+
+    const input = document.getElementById('id_profile_picture');
+    const form = document.getElementById('profile-pic-form');
+
+    input.addEventListener('change', function () {
+        form.submit();
+    });
+</script>
+
+{% endblock %}

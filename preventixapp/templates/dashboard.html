@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4" style="max-width: 900px; margin: 0 auto;">
-    <h3>Estadísticas de tus tipos de citas</h3>
+    <h3>Estadísticas de tus tipos de citas desde que usas Preventix</h3>
     <canvas id="specialtyChart" width="400" height="275"></canvas>
 
     <div class="mt-5">
@@ -23,7 +23,7 @@
     </div>    
 
     <div class="mt-5 mb-5">
-        <h4>Citas recomendadas basadas en tus hábitos</h4>
+        <h4>Citas recomendadas basadas en lo que piden otros usuarios</h4>
         {% if recommended_appointments %}
             <ul class="list-group">
                 {% for appointment in recommended_appointments %}

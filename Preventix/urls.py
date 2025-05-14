@@ -30,6 +30,7 @@ urlpatterns = [
     path('appointments/', include('appointments.urls')),
     path('medical_history/', include('medical_history.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('profile/', preventixappViews.profile_view, name='profile'),
 ]
 
 if settings.DEBUG:

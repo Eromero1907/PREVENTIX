@@ -10,6 +10,8 @@ from .utils import get_forgotten_specialties
 from appointments.ml_model import recommend_appointments
 from appointments.models import Appointment 
 import json
+from .forms import ProfilePictureForm, ProfileInfoForm
+from datetime import date
 
 User = get_user_model()
 
@@ -107,3 +109,36 @@ def dashboard(request):
         'forgotten_specialties': forgotten,
         'recommended_appointments': recommended_appointments.to_dict('records'),  # Convierte el DataFrame a dict
     })
+
+@login_required
+def profile_view(request):
+    user = request.user
+
+    if request.method == 'POST':
+        if 'profile_picture' in request.POST:
+            picture_form = ProfilePictureForm(request.POST, request.FILES, instance=user)
+            info_form = ProfileInfoForm(instance=user)
+            if picture_form.is_valid():
+                picture_form.save()
+                messages.success(request, 'Foto de perfil actualizada correctamente.')
+                return redirect('profile')
+        else:
+            info_form = ProfileInfoForm(request.POST, instance=user)
+            picture_form = ProfilePictureForm(instance=user)
+
+            if info_form.is_valid():
+                info_form.save()  # 💡 Aquí guardamos los datos en el usuario
+                messages.success(request, 'Información actualizada correctamente.')
+                return redirect('profile')
+            else:
+                print(info_form.errors)  # Para ver si hay errores al validar
+
+    else:
+        picture_form = ProfilePictureForm(instance=user)
+        info_form = ProfileInfoForm(instance=user)
+
+    return render(request, 'profile.html', {
+        'picture_form': picture_form,
+        'info_form': info_form,
+    })
+

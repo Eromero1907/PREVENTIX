@@ -15,7 +15,7 @@
             <!-- Logo y texto como enlace para el dashboard -->
             <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
                 <!-- Logo -->
-                <img src="{% static 'images/logo.png' %}" height="60" class="me-2">
+                <img src="{% static 'images/logo.png' %}" height="50" width="50" class="me-1">
                 <!-- Texto -->
                 <span style="font-weight: bold;">Preventix</span>
             </a>
@@ -28,7 +28,7 @@
                     <li><a href="{% url 'appointment_list' %}" class="btn btn-primary btn-sm">Citas</a></li>
                     <li><a href="{% url 'medical_history' %}" class="btn btn-primary btn-sm">Mis Documentos</a></li>
                     <li><a href="{% url 'prescription_list' %}" class="btn btn-primary btn-sm">Prescripciones</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Perfil</a></li>
+                    <li class="nav-item"><a class="btn btn-primary btn-sm" href="{% url 'profile' %}">Perfil</a></li>
                     <li class="nav-item">
                         <button class="btn btn-primary btn-sm" id="logoutBtn">Salir</button>
                     </li>
