@@ -75,10 +75,10 @@ def recommend_appointments(user_id):
 
     # Recomendación
     distances, indices = knn.kneighbors(df[['user_id', 'count', 'date']])
-    recommended = df.iloc[indices[0]]
+    recommended = df.iloc[indices[0]].copy()
 
     # Devolver las citas recomendadas con solo la fecha
-    recommended['formatted_date'] = recommended['last_date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Solo la fecha
+    recommended.loc[:,'formatted_date'] = recommended['last_date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Solo la fecha
 
     return recommended[['specialty', 'formatted_date']]
 

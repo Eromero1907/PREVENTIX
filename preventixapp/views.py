@@ -102,12 +102,19 @@ def dashboard(request):
     # Obtener citas recomendadas para el usuario
     recommended_appointments = recommend_appointments(request.user.id)
 
+    # Verificar si el DataFrame tiene datos antes de pasarlo al template
+    if not recommended_appointments.empty:
+        recommended_appointments = recommended_appointments.to_dict('records')
+    else:
+        recommended_appointments = []
+
     return render(request, 'dashboard.html', {
         'labels': json.dumps(labels),
         'counts': json.dumps(counts),
         'forgotten_specialties': forgotten,
-        'recommended_appointments': recommended_appointments.to_dict('records'),  # Convierte el DataFrame a dict
+        'recommended_appointments': recommended_appointments,
     })
+
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
