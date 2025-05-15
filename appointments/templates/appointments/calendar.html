@@ -84,6 +84,14 @@
 
             // Mostrar el modal
             new bootstrap.Modal(document.getElementById('eventModal')).show();
+        },
+        // ➡️ Aquí agregamos la redirección cuando haces clic en un día vacío
+        dateClick: function(info) {
+            // info.dateStr viene como 'YYYY-MM-DD'
+            const [year, month, day] = info.dateStr.split('-');
+            const formattedDate = `${day}-${month}-${year}`; // Formato DD-MM-YYYY
+
+            window.location.href = `/appointments/create/?date=${formattedDate}`;
         }
     });
     calendar.render();

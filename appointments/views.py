@@ -7,6 +7,7 @@ from datetime import date
 from .ml_model import recommend_appointments
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from datetime import datetime
 
 # Lista solo las citas del usuario autenticado
 
@@ -107,7 +108,19 @@ def create_appointment(request):
             appointment.save()
             return redirect('appointment_list')
     else:
-        form = AppointmentForm()
+        date_str = request.GET.get('date')
+        initial_data = {}
+
+        if date_str:
+            try:
+                # Parseamos DD-MM-YYYY a objeto date
+                appointment_date = datetime.strptime(date_str, '%d-%m-%Y').date()
+                # Asumamos que el campo de fecha en el form se llama 'date'
+                initial_data['date'] = appointment_date
+            except ValueError:
+                pass  # Fecha inválida, ignoramos
+
+        form = AppointmentForm(initial=initial_data)
         form.fields['specialty'].choices = specialty_choices
 
     return render(request, 'appointments/create_appointment.html', {
