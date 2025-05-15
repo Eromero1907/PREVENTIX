@@ -55,7 +55,7 @@ class CustomUser(AbstractUser):
     )
     blood_type = models.CharField(max_length=3, blank=True)
     insurance = models.CharField("EPS / Aseguradora", max_length=100, blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True, default='images/default_profile.png')
 
     def __str__(self):
         return self.username
