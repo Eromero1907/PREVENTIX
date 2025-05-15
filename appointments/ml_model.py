@@ -38,15 +38,11 @@ def train_recommendation_model():
 
 # Función para recomendar citas
 def recommend_appointments(user_id):
-    # Verificar que el modelo existe
     if not os.path.exists(MODEL_PATH):
-        print("Modelo no encontrado. Entrenando uno nuevo...")
         train_recommendation_model()
 
-    # Cargar modelo
     knn = joblib.load(MODEL_PATH)
 
-    # Agregar la cuenta de citas por especialidad del usuario
     appointments = (
         Appointment.objects
         .filter(user_id=user_id)
@@ -56,29 +52,26 @@ def recommend_appointments(user_id):
         .annotate(count=Count('id'), last_date=Max('date'))
     )
 
-    # Convertir a DataFrame
     df = pd.DataFrame(appointments)
     if df.empty:
-        return pd.DataFrame()  # No hay recomendaciones si no hay citas
+        return pd.DataFrame()
 
     df['user_id'] = user_id
-    df['last_date'] = pd.to_datetime(df['last_date'])  # Asegurarse de que last_date es datetime
-
-    # Convertir 'last_date' a timestamp (numérico)
-    df['timestamp'] = df['last_date'].apply(lambda x: x.timestamp())  # Convertir a timestamp (segundos desde 1970)
-
-    # Usar 'timestamp' como una característica numérica para las recomendaciones
-    df['date'] = df['timestamp']  # Usamos 'timestamp' como número
-
-    # Asegurarse de no tener NaNs
+    df['last_date'] = pd.to_datetime(df['last_date'])
+    df['timestamp'] = df['last_date'].apply(lambda x: x.timestamp())
+    df['date'] = df['timestamp']
     df = df.dropna(subset=['count', 'date'])
 
-    # Recomendación
-    distances, indices = knn.kneighbors(df[['user_id', 'count', 'date']])
-    recommended = df.iloc[indices[0]].copy()
+    n_neighbors = min(3, len(df))
+    distances, indices = knn.kneighbors(df[['user_id', 'count', 'date']], n_neighbors=n_neighbors)
 
-    # Devolver las citas recomendadas con solo la fecha
-    recommended.loc[:,'formatted_date'] = recommended['last_date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Solo la fecha
+    valid_indices = [i for i in indices[0] if i < len(df)]
+    if not valid_indices:
+        return pd.DataFrame()
+
+    recommended = df.iloc[valid_indices].copy()
+    recommended.loc[:, 'formatted_date'] = recommended['last_date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
     return recommended[['specialty', 'formatted_date']]
+
 
