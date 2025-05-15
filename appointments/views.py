@@ -188,13 +188,14 @@ def calendar_view(request):
 
     for appointment in user_appointments:
         events.append({
-        'title': appointment.specialty,
-        'start': appointment.date.isoformat(),
-        'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Color en el evento
-        'extendedProps': {
-            'time': appointment.time.strftime('%H:%M') if appointment.time else 'No definida',
-            'address': appointment.address if appointment.address else 'No definida',
-            'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Aseguramos que el color esté aquí también
+            'id': appointment.id,
+            'title': appointment.specialty,
+            'start': appointment.date.isoformat(),
+            'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Color en el evento
+            'extendedProps': {
+                'time': appointment.time.strftime('%H:%M') if appointment.time else 'No definida',
+                'address': appointment.address if appointment.address else 'No definida',
+                'color': color_map.get(appointment.specialty, '#7f7f7f'),  # Aseguramos que el color esté aquí también
         }
         })
 

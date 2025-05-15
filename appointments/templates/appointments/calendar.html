@@ -21,6 +21,7 @@
       </div>
       <div class="modal-footer bg-white">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a id="deleteButton" class="btn btn-danger">Eliminar</a>
       </div>
     </div>
   </div>
@@ -82,6 +83,8 @@
             document.getElementById('modalTime').textContent = info.event.extendedProps.time;
             document.getElementById('modalAddress').textContent = info.event.extendedProps.address;
 
+            const deleteButton = document.getElementById('deleteButton');
+            deleteButton.href = `/appointments/${info.event.id}/delete`;
             // Mostrar el modal
             new bootstrap.Modal(document.getElementById('eventModal')).show();
         },
