@@ -1,6 +1,5 @@
 from django import forms
 from .models import Appointment
-from .validators import validate_address
 
 class AppointmentForm(forms.ModelForm):
     date = forms.DateField(
@@ -16,7 +15,6 @@ class AppointmentForm(forms.ModelForm):
     address = forms.CharField(
         max_length=250,
         label='Dirección',
-        validators=[validate_address],
         widget=forms.TextInput(attrs={'placeholder': 'Cra 12 #34 - 56', 'class': 'form-control'})
     )
     doctor_name = forms.CharField(
@@ -44,4 +42,4 @@ class AppointmentForm(forms.ModelForm):
         }
 
 class DireccionForm(forms.Form):
-    direccion = forms.CharField(max_length=50, validators=[validate_address])
+    direccion = forms.CharField(max_length=50)

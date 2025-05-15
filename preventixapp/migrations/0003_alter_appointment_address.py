@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='appointment',
             name='address',
-            field=models.CharField(max_length=255, validators=[preventixapp.models.validate_address]),
+            field=models.CharField(max_length=255),
         ),
     ]

@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('specialty', models.CharField(max_length=255)),
                 ('doctor_name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True, null=True)),
-                ('address', models.CharField(max_length=225, validators=[preventixapp.models.validate_address])),
+                ('address', models.CharField(max_length=225)),
             ],
         ),
         migrations.CreateModel(

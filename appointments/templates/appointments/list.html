@@ -13,6 +13,7 @@
                 <th>Especialidad</th>
                 <th>Fecha</th>
                 <th>Hora</th>
+                <th>Dirección</th>
                 <th>Doctor(a)</th>
                 <th>Acciones</th>
             </tr>
@@ -23,6 +24,7 @@
                 <td>{{ appointment.specialty }}</td>
                 <td>{{ appointment.date }}</td>
                 <td>{{ appointment.time }}</td>
+                <td>{{ appointment.address }}</td>
                 <td>{{ appointment.doctor_name }}</td>
                 <td>
                     <a href="{% url 'edit_appointment' appointment.id %}" class="btn btn-warning">Modificar</a>

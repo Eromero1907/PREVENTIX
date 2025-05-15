@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customuser',
             name='direccion',
-            field=models.CharField(default='sin direccion', max_length=50, validators=[preventixapp.models.validate_address]),
+            field=models.CharField(default='sin direccion', max_length=50),
             preserve_default=False,
         ),
         migrations.AddField(

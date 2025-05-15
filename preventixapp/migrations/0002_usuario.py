@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Usuario',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('direccion', models.CharField(max_length=50, validators=[preventixapp.models.validate_address])),
+                ('direccion', models.CharField(max_length=50)),
             ],
         ),
     ]

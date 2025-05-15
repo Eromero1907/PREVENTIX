@@ -11,7 +11,6 @@ from appointments.ml_model import recommend_appointments
 from appointments.models import Appointment 
 import json
 from .forms import ProfilePictureForm, ProfileInfoForm
-from datetime import date
 
 User = get_user_model()
 
