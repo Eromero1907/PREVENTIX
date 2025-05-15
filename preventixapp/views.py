@@ -110,35 +110,56 @@ def dashboard(request):
         'recommended_appointments': recommended_appointments.to_dict('records'),  # Convierte el DataFrame a dict
     })
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import ProfilePictureForm, ProfileInfoForm
+
 @login_required
 def profile_view(request):
     user = request.user
 
+    picture_form = ProfilePictureForm(instance=user)
+    info_form = ProfileInfoForm(instance=user)
+
     if request.method == 'POST':
-        if 'profile_picture' in request.POST:
+        # Actualización de la foto de perfil
+        if 'save_picture' in request.POST:
             picture_form = ProfilePictureForm(request.POST, request.FILES, instance=user)
-            info_form = ProfileInfoForm(instance=user)
+
             if picture_form.is_valid():
                 picture_form.save()
                 messages.success(request, 'Foto de perfil actualizada correctamente.')
                 return redirect('profile')
-        else:
+            else:
+                messages.error(request, 'Hubo un problema al actualizar la foto de perfil.')
+
+        # Actualización de información del usuario
+        elif 'save_info' in request.POST:
             info_form = ProfileInfoForm(request.POST, instance=user)
-            picture_form = ProfilePictureForm(instance=user)
+
+            # 🔍 Verificar datos recibidos
+            print("Datos recibidos en el formulario:")
+            for key, value in request.POST.items():
+                print(f"{key}: {value}")
 
             if info_form.is_valid():
-                info_form.save()  # 💡 Aquí guardamos los datos en el usuario
+                print("Formulario válido, guardando información...")
+                info_form.save()
                 messages.success(request, 'Información actualizada correctamente.')
                 return redirect('profile')
             else:
-                print(info_form.errors)  # Para ver si hay errores al validar
+                # 🔍 Mostrar errores si hay problemas
+                print("Errores en el formulario:", info_form.errors)
+                messages.error(request, 'Hubo un problema al actualizar la información.')
+        else:
+            picture_form = ProfilePictureForm(instance=user)
+            info_form = ProfileInfoForm(instance=user)
 
-    else:
-        picture_form = ProfilePictureForm(instance=user)
-        info_form = ProfileInfoForm(instance=user)
-
+    # 🔍 Siempre retornamos los formularios inicializados
     return render(request, 'profile.html', {
         'picture_form': picture_form,
         'info_form': info_form,
     })
+
 
